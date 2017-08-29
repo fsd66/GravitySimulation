@@ -80,7 +80,7 @@ public class GravityMain extends JPanel implements ActionListener {
         simulationCache = new LinkedList<Particle[]>();
         Particle[] initialParticles = new Particle[numberOfParticles];
         for(int i = 0; i < initialParticles.length; i++) {
-            initialParticles[i] = particleGenerator.generateRandomParticle(0, getWIDTH(), 0, getHEIGHT(), 1f,0,1, 0, 0, 0xFFFFFF);
+            initialParticles[i] = particleGenerator.generateRandomParticle(0, getWIDTH(), 0, getHEIGHT(), 3f,0,5, 0, 0, 0xFFFFFF);
         }
         simulationCache.add(initialParticles);
         System.out.println(numberOfParticles + " particles successfully generated.");
@@ -90,7 +90,10 @@ public class GravityMain extends JPanel implements ActionListener {
         for(int i = 0; i < numberOfFrames; i++) {
             //Calculates the particles of the next frame, and adds it to the frame list
             simulationCache.add(applyGravity(simulationCache.getLast()));
-            System.out.println("Generated frame #" + simulationCache.size());
+
+            if(simulationCache.size() % 100 == 0) {
+                System.out.println("Generated frame #" + simulationCache.size());
+            }
         }
 
         System.out.println("Simulated " + simulationCache.size() + " frames.");
@@ -107,12 +110,12 @@ public class GravityMain extends JPanel implements ActionListener {
         // Apply the effect of gravity from the particles on the last frame to the particles on the current frame
         for(Particle p : frame) {
             for(Particle p2 : particles) {
-                if(p == p2) break;
-                p.applyGravity(p2, TARGET_FPS / 1000.0f);
+                if(p != p2) {
+                    p.applyGravity(p2, 1000.0f / TARGET_FPS);
+                }
             }
-
             // Apply the movement induced by gravity to each particle on the new frame
-            p.step(TARGET_FPS / 1000.0f);
+            p.step(1000.0f / TARGET_FPS);
         }
 
         return frame;
@@ -146,7 +149,7 @@ public class GravityMain extends JPanel implements ActionListener {
     }
 
     public void step() {
-        if(currentFrame < 2) {
+        if(frameIterator.hasNext()) {
             currentParticles = frameIterator.next();
             currentFrame++;
         }

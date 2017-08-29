@@ -17,12 +17,12 @@ public class Particle {
     }
 
     public void step(float delta) {
-        move((xVelocity * (delta / 1000.0f)), (yVelocity * (delta / 1000.0f)));
+        move(xVelocity * (delta / 1000.0f), yVelocity * (delta / 1000.0f));
     }
 
     public void render(Graphics2D g) {
         g.setColor(new Color(color));
-        g.drawOval((int)(x - radius), (int)(y - radius), (int)(radius), (int)(radius));
+        g.drawOval((int)(x - radius), (int)(y - radius), (int)(2 * radius), (int)(2 * radius));
     }
 
     public void move(float dx, float dy) {
@@ -89,13 +89,13 @@ public class Particle {
 
     public void applyGravity(Particle p, float delta) {
         // m_1a = Gm_1m_2/r^2 --> a = Gm_2/r^2 --> vt = Gm_2/r^2 --> v = Gm_2/tr^2
-        float rSquared = (((p.getX() - x) * (p.getX() - x)) + ((p.getY() - y) * (p.getY() - y)));
-        float v = (Particle.getGravitationalConstant() * p.getMass()) / ((delta/1000.0f) * rSquared);
-        float dXV = (float) (v * Math.cos(Math.acos(p.getX() - x / Math.sqrt(rSquared))));
-        float dYV = (float) (v * Math.sin(Math.asin(p.getY() - y / Math.sqrt(rSquared))));
+        double rSquared = Math.pow(p.getX() - x, 2) + Math.pow(p.getY() - y, 2);
+        double v = (Particle.getGravitationalConstant() * p.getMass()) / ((delta/1000.0f) * rSquared);
+        double dXV = v * Math.cos(Math.acos((p.getX() - x) / Math.sqrt(rSquared)));
+        double dYV = v * Math.sin(Math.asin((p.getY() - y) / Math.sqrt(rSquared)));
         if(Particle.detectCollision(this, p)) {
-            dXV = 0.0f;
-            dYV = 0.0f;
+            dXV = 0.0;
+            dYV = 0.0;
         }
         xVelocity += dXV;
         yVelocity += dYV;
